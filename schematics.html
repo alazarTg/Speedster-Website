@@ -243,6 +243,24 @@
       margin-bottom: 0.5rem;
     }
 
+    /* ── Large-graph pan panel (scrolls both axes) ── */
+    .graph-scroll {
+      overflow: auto;
+      border-radius: 8px;
+      background: #f5f5f5;
+      padding: 1rem;
+      max-height: 440px;
+      cursor: zoom-in;
+    }
+    .graph-scroll img {
+      /* Render wide enough that node labels stay legible; pan to explore */
+      width: 1100px;
+      max-width: none;
+      height: auto;
+      display: block;
+      border-radius: 6px;
+    }
+
     /* ── Lightbox ── */
     #lightbox {
       display: none;
@@ -259,6 +277,16 @@
       max-height: 92vh;
       border-radius: 8px;
       box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    }
+    /* Full-resolution mode for very large diagrams: scroll/pan instead of shrink-to-fit */
+    #lightbox.fullsize.open {
+      display: block;
+      padding: 3rem 2rem 2rem;
+    }
+    #lightbox.fullsize img {
+      max-width: none;
+      max-height: none;
+      width: 1600px;
     }
     #lightbox-close {
       position: fixed;
@@ -558,6 +586,30 @@
         </p>
       </div>
 
+      <!-- Section 6: ROS 2 Node Graph -->
+      <h3 class="section-heading" style="margin-top: 2rem; margin-bottom: 1rem;">ROS 2 Node Graph</h3>
+
+      <div class="box mb-6">
+        <h3 class="section-heading">rqt_graph</h3>
+        <p class="section-subheading">Full ROS 2 computation graph — nodes, topics, and action interfaces for the finger system</p>
+
+        <div class="scroll-hint">
+          <span>&#10021;</span>
+          <span>Drag scrollbars to pan in any direction &nbsp;·&nbsp; Click to expand fullscreen</span>
+        </div>
+
+        <div class="graph-scroll" onclick="openLightbox('static/images/rosgraph.png', true)">
+          <img src="static/images/rosgraph.png"
+               alt="ROS 2 node graph showing the simulation bridge, finger planner, motion action servers, and whackamole nodes"
+               loading="lazy">
+        </div>
+
+        <p class="view-caption" style="margin-top: 0.75rem;">
+          Figure 7 — ROS 2 node graph: /simulation_bridge feeds motor feedback to /finger_planner, which exposes the
+          motion action servers consumed by /finger_whackamole
+        </p>
+      </div>
+
     </div>
   </section>
 
@@ -663,13 +715,17 @@
     });
 
     /* ── Lightbox ── */
-    function openLightbox(src) {
+    function openLightbox(src, fullsize) {
+      var lb = document.getElementById('lightbox');
       document.getElementById('lightbox-img').src = src;
-      document.getElementById('lightbox').classList.add('open');
+      lb.classList.toggle('fullsize', !!fullsize);
+      lb.classList.add('open');
       document.body.style.overflow = 'hidden';
     }
     function closeLightbox() {
-      document.getElementById('lightbox').classList.remove('open');
+      var lb = document.getElementById('lightbox');
+      lb.classList.remove('open');
+      lb.classList.remove('fullsize');
       document.body.style.overflow = '';
     }
   </script>
